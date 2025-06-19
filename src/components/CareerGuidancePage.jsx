@@ -26,7 +26,7 @@ const CareerGuidancePage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8000/submit-profile", {
+      const response = await axios.post("https://career-guidance-backend-sybg.onrender.com/submit-profile", {
         uid: "12345678",
         email: "student@example.com",
         academic_background: formData.academics,

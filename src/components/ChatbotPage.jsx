@@ -31,7 +31,7 @@ function ChatbotPage() {
     setChatHeight('h-96'); // Increase chat height after a message is sent
 
     try {
-      const res = await axios.post('http://localhost:8000/chatbot', {
+      const res = await axios.post('https://career-guidance-backend-sybg.onrender.com/chatbot', {
         query: query,
       });
 
