@@ -1,76 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
 
-function CareerGuidancePage() {
+const CareerGuidancePage = () => {
   const [formData, setFormData] = useState({
-    interests: '',
-    hobbies: '',
-    skills: '',
-    academics: '',
-  });
-  const [recommendations, setRecommendations] = useState({
-    skills_recommendations: '',
-    interests_recommendations: ''
+    interests: "",
+    hobbies: "",
+    skills: "",
+    academics: "",
   });
 
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const [careerRecommendation, setCareerRecommendation] = useState({
+    career_field: "",
+    job_specialization: "",
+    description: "",
+  });
+
+  const [error, setError] = useState(null);
+
+  const handleChange = async (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setError(null); // Clear previous errors when user types
+  }; // Added semicolon
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Sending data to FastAPI backend
     try {
-      const response = await fetch("http://localhost:8000/submit-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uid: "123456", // This can be dynamically set based on user authentication
-          email: "student@example.com", // This can be dynamically set based on user authentication
-          academic_background: formData.academics,
-          skills: formData.skills.split(',').map(skill => skill.trim()),
-          interests: formData.interests.split(',').map(interest => interest.trim()),
-        }),
+      const response = await axios.post("http://localhost:8000/submit-profile", {
+        uid: "12345678",
+        email: "student@example.com",
+        academic_background: formData.academics,
+        skills: formData.skills.split(",").map((skill) => skill.trim()),
+        interests: formData.interests.split(",").map((interest) => interest.trim()),
+        qualifications: [],
       });
 
-      const data = await response.json();
-
-      // Set recommendations from FastAPI response
-      if (response.ok) {
-        setRecommendations({
-          skills_recommendations: data.skills_recommendations,
-          interests_recommendations: data.interests_recommendations,
-        });
+      if (response.status === 200 && response.data.career_recommendations) {
+        setCareerRecommendation(response.data.career_recommendations);
+        setError(null);
       } else {
-        alert("Error: " + data.error);
+        setError(response.data.error || "Failed to fetch career recommendations.");
       }
-
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("There was an error submitting your form.");
+      setError("There was an error submitting your form. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-white py-20 px-10">
-      <h1 className="text-4xl font-bold text-center text-green-600 mb-10">
+    <div className="mt-10 min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-16">
+      <h1 className="text-4xl font-bold text-center text-teal-600 mb-4">
         Career Guidance Form
       </h1>
-
-      <p className="max-w-3xl mx-auto text-center text-gray-700 mb-12">
-        Tell us about your interests, hobbies, skills, and academic background. 
-        Our AI-powered system will analyze your inputs and help you find the best career path.
+      <p className="max-w-2xl mx-auto text-center text-gray-600 mb-10">
+        Share your interests, skills, and academic background to discover your ideal career path with our AI-powered guidance system.
       </p>
 
       <form
         onSubmit={handleSubmit}
-        className="max-w-4xl mx-auto bg-gray-100 p-10 rounded-lg shadow-lg"
+        className="max-w-3xl mx-auto bg-white p-8 rounded shadow-lg"
       >
         {/* Interests */}
         <div className="mb-6">
-          <label htmlFor="interests" className="block text-green-700 font-semibold mb-2">
+          <label htmlFor="interests" className="block text-teal-700 font-semibold mb-2">
             Interests
           </label>
           <textarea
@@ -78,16 +70,16 @@ function CareerGuidancePage() {
             name="interests"
             value={formData.interests}
             onChange={handleChange}
-            rows={3}
-            placeholder="Describe your interests..."
-            className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+            rows={1}
+            placeholder="E.g., music, technology, writing..."
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
             required
           />
         </div>
 
         {/* Hobbies */}
         <div className="mb-6">
-          <label htmlFor="hobbies" className="block text-green-700 font-semibold mb-2">
+          <label htmlFor="hobbies" className="block text-teal-700 font-semibold mb-2">
             Hobbies
           </label>
           <textarea
@@ -95,16 +87,16 @@ function CareerGuidancePage() {
             name="hobbies"
             value={formData.hobbies}
             onChange={handleChange}
-            rows={3}
-            placeholder="Write about your hobbies..."
-            className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+            rows={1}
+            placeholder="E.g., playing guitar, hiking..."
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
             required
           />
         </div>
 
         {/* Skills */}
         <div className="mb-6">
-          <label htmlFor="skills" className="block text-green-700 font-semibold mb-2">
+          <label htmlFor="skills" className="block text-teal-700 font-semibold mb-2">
             Skills
           </label>
           <textarea
@@ -112,16 +104,16 @@ function CareerGuidancePage() {
             name="skills"
             value={formData.skills}
             onChange={handleChange}
-            rows={3}
-            placeholder="List your skills..."
-            className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+            rows={1}
+            placeholder="E.g., programming, communication..."
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
             required
           />
         </div>
 
         {/* Academic Background */}
         <div className="mb-6">
-          <label htmlFor="academics" className="block text-green-700 font-semibold mb-2">
+          <label htmlFor="academics" className="block text-teal-700 font-semibold mb-2">
             Academic Background
           </label>
           <textarea
@@ -129,31 +121,39 @@ function CareerGuidancePage() {
             name="academics"
             value={formData.academics}
             onChange={handleChange}
-            rows={3}
-            placeholder="Tell us about your education..."
-            className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+            rows={1}
+            placeholder="E.g., B.S. in Computer Science..."
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
             required
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition duration-300 font-semibold text-lg"
+          className="w-full bg-teal-600 text-white py-3 rounded-md hover:bg-teal-700 transition duration-300 font-semibold"
         >
-          Submit
+          Get Recommendations
         </button>
       </form>
 
-      {/* Display Recommendations */}
-      {recommendations.skills_recommendations && (
-        <div className="mt-10 bg-green-100 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-green-700">Career Recommendations:</h2>
-          <p className="text-lg mt-4">Based on your skills, we recommend you consider a role as a <strong>{recommendations.skills_recommendations}</strong>.</p>
-          <p className="text-lg mt-4">Based on your interests, we recommend a career as a <strong>{recommendations.interests_recommendations}</strong>.</p>
+      {/* Display Errors */}
+      {error && (
+        <div className="mt-8 max-w-3xl mx-auto text-center">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Display Career Recommendations */}
+      {careerRecommendation.career_field && !error && (
+        <div className="mt-8 max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold text-teal-600 mb-4">Your Career Recommendation</h2>
+          <p className="text-lg mb-2"><strong>Career Field:</strong> {careerRecommendation.career_field}</p>
+          <p className="text-lg mb-2"><strong>Job Specialization:</strong> {careerRecommendation.job_specialization}</p>
+          <p className="text-lg"><strong>Description:</strong> {careerRecommendation.description}</p>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default CareerGuidancePage;

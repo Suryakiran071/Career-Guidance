@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';  // Import useNavigate
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase';  // adjust path
+import logofull from '../assets/CG Full Logo.png';  // adjust path
 
 function Navbar() {
   const [user, setUser] = useState(null);
@@ -40,11 +41,15 @@ function Navbar() {
   const avatarLetter = user?.email?.charAt(0).toUpperCase() || '';
 
   return (
-    <nav className="p-4 fixed top-0 left-0 w-full z-10 bg-green-700">
+    <nav className="p-4 fixed top-0 left-0 w-full z-10 bg-teal-700">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-semibold">
-          Career Guidance
+        {/* Logo with Image */}
+        <Link to="/" className="flex items-center">
+          <img
+            src={logofull}  // Replace with your image URL
+            alt="Career Guidance Logo"
+            className="h-12"  // Adjust the height of the image
+          />
         </Link>
 
         {/* Always show links */}
@@ -68,7 +73,7 @@ function Navbar() {
             <div className="relative ml-4" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold uppercase focus:outline-none"
+                className="w-10 h-10 rounded-full bg-gray-400 text-black flex items-center justify-center font-semibold uppercase focus:outline-none"
                 aria-label="User menu"
               >
                 {avatarLetter}
@@ -78,16 +83,16 @@ function Navbar() {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 text-gray-700">
                   <div className="px-4 py-2 text-sm truncate">{user.email}</div>
 
-                  <Link
-                    to="/profile"
-                    className="w-full text-left px-4 py-2 hover:bg-green-600 hover:text-white transition"
+                  <button
+                    className="w-full text-left px-4 py-2 hover:bg-teal-600 hover:text-white transition"
                   >
-                    Profile
-                  </Link>
-
+                    <Link to="/profile">
+                      Profile
+                    </Link>
+                  </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 hover:bg-green-600 hover:text-white transition"
+                    className="w-full text-left px-4 py-2 hover:bg-teal-600 hover:text-white transition"
                   >
                     Logout
                   </button>

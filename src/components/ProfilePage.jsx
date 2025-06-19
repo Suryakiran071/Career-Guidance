@@ -26,7 +26,7 @@ function ProfilePage() {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <div className="w-full max-w-md p-8 bg-gray-100 rounded-lg shadow-xl">
+      <div className="mt-16 w-full max-w-md p-8 bg-gray-100 rounded-lg shadow-xl">
         <h2 className="text-2xl font-semibold text-center text-green-500 mb-6">Your Profile</h2>
 
         <div className="flex justify-center mb-4">
